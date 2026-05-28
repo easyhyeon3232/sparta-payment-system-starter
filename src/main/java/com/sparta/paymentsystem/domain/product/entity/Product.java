@@ -1,6 +1,8 @@
 package com.sparta.paymentsystem.domain.product.entity;
 
 import com.sparta.paymentsystem.global.entity.BaseTimeEntity;
+import com.sparta.paymentsystem.global.error.BusinessException;
+import com.sparta.paymentsystem.global.error.ErrorCode;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -19,7 +21,6 @@ public class Product extends BaseTimeEntity {
     @Column(nullable = false, length = 200)
     private String name;
 
-    // UNSIGNED : 음수가 들어가지 않게 방어
     @Column(nullable = false, columnDefinition = "int UNSIGNED")
     private int price;
 
@@ -31,10 +32,10 @@ public class Product extends BaseTimeEntity {
 
     public Product(String name, int price, int stock, String description) {
         if (price < 0) {
-            throw new IllegalArgumentException("가격은 0 이상이어야 합니다");
+            throw new BusinessException(ErrorCode.INVALID_PRICE);
         }
         if (stock < 0) {
-            throw new IllegalArgumentException("재고는 0 이상이어야 합니다");
+            throw new BusinessException(ErrorCode.INVALID_STOCK);
         }
         this.name = name;
         this.price = price;
